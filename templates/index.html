@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Contacts · Contact Manager{% endblock %}
+{% block content %}
+<section class="intro">
+  <p class="eyebrow">YOUR ADDRESS BOOK</p>
+  <h1>Contacts</h1>
+  <p>Keep names and contact details in one simple place.</p>
+</section>
+<form class="search" method="get" action="{{ url_for('index') }}">
+  <input type="search" name="q" value="{{ search }}" placeholder="Search name, phone or email">
+  <button type="submit">Search</button>
+  {% if search %}<a href="{{ url_for('index') }}">Clear</a>{% endif %}
+</form>
+{% if contacts %}
+  <div class="contact-grid">
+    {% for contact in contacts %}
+    <article class="contact-card">
+      <div class="avatar">{{ contact["name"][0]|upper }}</div>
+      <h2>{{ contact["name"] }}</h2>
+      {% if contact["phone"] %}<p><strong>Phone</strong> {{ contact["phone"] }}</p>{% endif %}
+      {% if contact["email"] %}<p><strong>Email</strong> {{ contact["email"] }}</p>{% endif %}
+      {% if contact["address"] %}<p><strong>Address</strong> {{ contact["address"] }}</p>{% endif %}
+      <div class="actions">
+        <a class="button secondary" href="{{ url_for('edit_contact', contact_id=contact['id']) }}">Edit</a>
+        <form method="post" action="{{ url_for('delete_contact', contact_id=contact['id']) }}" onsubmit="return confirm('Delete this contact?')">
+          <button class="danger" type="submit">Delete</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+{% else %}
+  <section class="empty">
+    <h2>No contacts found</h2>
+    <p>{% if search %}Try a different search, or clear the search.{% else %}Add your first contact to get started.{% endif %}</p>
+    <a class="button" href="{{ url_for('add_contact') }}">Add a contact</a>
+  </section>
+{% endif %}
+{% endblock %}
